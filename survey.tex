@@ -1,0 +1,190 @@
+\documentclass{article}
+
+\usepackage{enumerate}
+\usepackage[margin=1in]{geometry}
+\usepackage[doublespacing]{setspace}
+
+\title{A Survey of Shape Analysis Techniques}
+\author{Vedant Kumar, \texttt{vsk@berkeley.edu}}
+
+\begin{document}
+\maketitle
+
+\section{Introduction}
+
+Shape analysis techniques statically approximate the runtime structure of
+program memory. Put another way, shape analysis allows us to answer deep
+questions about a program's memory-usage patterns without actually running
+it. The ability to answer these questions is powerful and broadly
+applicable.
+
+The basic problem any shape analysis technique must solve 
+An early application of shape analysis 
+
+in the fields of compiler optimization and program verification.
+
+Larus and Hilfinger motivate their algorithm by 
+
+These techniques have several applications in the areas of
+compiler optimization and program verification. 
+the runtime organization of
+a program's memory. These techniques 
+
+This paper is organized in a top-down fashion. Section 1 characterizes shape
+analysis, states the basic problems in the field, and motivates further
+study. Section 2 delves into the fundamental approaches to solving shape
+analysis problems. Section 3 discusses the achievements of the field and the
+state of the art. Section 4 presents the challenges and open problems in the
+field. Section 5 suggests directions for future work and concludes.
+
+\section{Fundamental Algorithms}
+
+\begin{enumerate}[1.]
+    \item Shape graphs.
+    \item Abstract interpretation.
+    \item Dataflow equations.
+    \item Lattice structure of shape graphs.
+    \item Modelling interprocedural control flow.
+    \item Handling context-sensitivity.
+    \item Handling destructive pointer updates.
+\end{enumerate}
+
+\section{Achievements and Applications}
+
+See Sagiv/Reps.
+
+\section{Challenges and Open Problems}
+
+\begin{enumerate}[1.]
+    \item NP-hardness of approximation (see Larus/Hilfinger).
+    \item Concerns about tractability.
+    \item Disambiguating between heap-allocated storage, the stack, and
+        other types of (potentially volatile) memory.
+    \item NULL pointer dereferences.
+    \item Dealing with unsafe deallocations (\texttt{free()}).
+    \item Difficulty of implementation.
+    \item Constructing a conservative approximation quickly.
+\end{enumerate}
+
+\section{Conclusion}
+
+Future work;
+\begin{enumerate}[1.]
+    \item Designing parallel shape analysis algorithms.
+    \item Determine the best way to trade precision for speed.
+\end{enumerate}
+
+\section{Bibliography}
+
+\begin{enumerate}[1.]
+    \item M. Sagiv, T. Reps, and R. Wilhelm. Solving Shape-Analysis Problems
+        in Languages with Destructive Updating. In \textit{23rd Annual ACM
+        SIGPLAN-SIGACT Symposium on Principles of Programming Languages}.
+        1996.
+    \item N. Jones and S. Muchnick. A Flexible Approach to Interprocedural
+        Data Flow Analysis and Programs with Recursive Data Structures. In
+        \textit{ACM Symposium on Principles of Programming Languages}, pages
+        66-74, 1982.
+    \item J. Larus and P. Hilfinger. Detecting Conflicts Between Structure
+        Accesses. In \textit{SIGPLAN Conference on Programming Language
+        Design and Implementation}, pages 21-34, 1988.
+    \item M. Sagiv, T. Reps, and R. Wilhelm. Parametric Shape Analysis via
+        3-Valued Logic. In \textit{ACM Symposium on Principles of
+        Programming Languages}. 2002.
+    \item T. Tok, S. Guyer, and C. Lin. Efficient Flow-Sensitive
+        Interprocedural Data-Flow Analysis in the Presence of Pointers. In
+        \textit{LNCS, Springer-Verlag}, pages 17-31, 2006.
+    \item D. Atkinson and W. Griswold. Effective Whole-Program Analysis in
+        the Presence of Pointers. In \textit{SIGSOFT '98/FSE-6 Proceedings
+        of the 6th ACM SIGSOFT'}, pages 46-55, 1998.
+    \item D. Atkinson and W. Griswold. Implementation Techniques for
+        Efficient Data-Flow Analysis of Large Programs. In
+        \textit{Proceedings of the 2001 International Conference on Software
+        Maintenance}, pages 52-61, 2001.
+    \item G. Kastrinis and Y. Smaragdakis. Hybrid Context-Sensitivity for
+        Points-To Analysis. In \textit{Proceedings of the 34th ACM SIGPLAN
+        conference on Programming Language Design and Implementation}, pages
+        423-434, 2013.
+    \item X. Zhang, M. Naik, and H. Yang. Finding Optimum Abstractions in
+        Parametric Dataflow Analysis. In \textit{Proceedings of the 34th ACM
+        SIGPLAN conference on Programming Language Design and
+        Implementation}, pages 365-375, 2013.
+\end{enumerate}
+
+\section*{Notes}
+
+:: Survey Guidelines
+
+1) Pick an area in which you are interested. Alternatively, pick a paper
+   from a recent POPL or PLDI conference. 
+2) Read thoroughly 3-6 papers (or a monograph?). Read at least superficially
+   3-6 other papers. 
+3) Write a report on what you have learned (max 6 pages)
+        - What are the basic problems
+        - What are the basic approaches to solving them
+        - What are the main achievements to date
+        - What are open problems
+Keep the scope narrow enough so you can say something interesting, and cover
+2-3 lectures worth of material.
+
+===========================================================================
+
+Topic: shape analysis.
+
+:: What is the goal of shape analysis?
+
+Shape analyses determine the structure of dynamically-updated storage
+statically.
+
+:: Why is this important?
+
+Most immediately, it lets us answer questions about how a program organizes
+memory without running it. For example, we may specify a set of invariants
+for objects in memory and determine whether or not these invariants are ever
+violated (i.e we may model-check data structures). Shape analysis enables
+invariants which constrain memory accesses, allowing us to answer relevant
+questions about memory sharing and reachability in programs.
+
+Specific applications of shape analysis techniques include detecting null
+pointer dereferences, faulty handling of memory deallocation or destruction,
+and memory leaks.
+
+:: Is shape analysis a hard problem? Why (what are the 'basic problems')?
+
+Undecidibility, false positives, conservativeness, time bounds (?).
+
+Loss of precision due to abstract interpretation, simplifications which do not
+reflect the properties of real-world programs (e.g ignore NULL dereferences,
+treat allocations as cons cells).
+
+:: What are the general approaches to performing shape analysis?
+
+- L\&H: Construct an `alias graph' using abstract interpretation over a lattice
+  structure, then answer structural queries by traversing the graph.
+- M\&S: Construct a `shape graph' via similar means. The meet operation of the
+  shape graph lattice differs from that of L\&H, and indeed the structure of the
+  shape nodes is also very different. This class of graph is still constructed
+  via similar means (i.e abstract interpretation, with a lattice structure to
+  merge graphs).
+
+:: What is the current state-of-the-art in shape analysis?
+
+- Candidate: shape graphs of M\&S, see their discussion.
+- Candidate: a more recent paper by M\&S which concerns parameterized 3-valued
+  logic.
+
+- Mention demand-driven techniques (Atkinson, Griswold, 1998)
+
+:: What unsolved problems remain? How can we make progress in this field?
+
+- Make it faster
+    - Select data structures with thought for the underlying architecture
+    - Create parallel analyses
+- Make it more precise
+- Make it more usable: how do we implement practical, fast analyses?
+	o Papers often omit how to implement a mechanism for submitting queries
+	  to the `shape graph' or equivalent data structure.  
+	o Detail on efficient, parallel computation of these structures is also
+	  lacking.
+
+\end{document}
