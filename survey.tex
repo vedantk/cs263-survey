@@ -1,5 +1,6 @@
 \documentclass{article}
 
+\usepackage{amsmath}
 \usepackage{enumerate}
 \usepackage{indentfirst}
 \usepackage[margin=1in]{geometry}
@@ -14,31 +15,32 @@
 \section{Introduction}
 
 Shape analysis techniques statically determine whether the contents of a
-program's memory will satisfy a set of structural invariants. The basic
+program's memory can satisfy a set of structural invariants. The basic
 problems in shape analysis are (1) to decompose a program into a set of
 locations, (2) to conservatively determine what these locations point to,
 and (3) to use this `points-to' information to uncover the shape of
-structures in memory. In short, the goal of shape analysis is to answer
-questions about a program's memory-usage patterns without actually running 
+in-memory structures. In short, the goal of shape analysis is to answer
+questions about a program's memory-usage patterns without actually running
 it.
 
-The ability to answer these questions is powerful and broadly applicable. In
-the field of compile-time optimization, the task of automatically
-transforming a program into parallel fragments requires shape analysis to
-flag conflicting memory operations [LH88]. The graph structures used in
-several shape analysis methods (e.g [HPR89], [LH88], and [SRW96]) are
-amenable to solving this problem, and other related dependency-tracking
-problems which arise in optimization. In the field of program verification,
-shape analysis can be used to check if variables satisfy sophisticated
-invariants such as `is-a-list?', `is-a-tree?', and `contains-cycles?'
-[SRW96]. Enforcing these shape invariants statically is useful.
+The ability to answer these questions is powerful and broadly applicable.
+For example, in the field of compile-time optimization the task of
+automatically transforming a program into parallel fragments requires shape
+analysis to flag conflicting memory operations [LH88]. The graph structures
+used in several shape analysis methods (e.g [HPR89], [LH88], and [SRW96])
+are amenable to solving not just this problem, but other related
+dependency-tracking problems which arise in optimization. In the field of
+program verification, shape analysis can be used to check if variables
+satisfy sophisticated invariants such as `is-a-list?', `is-a-tree?', and
+`contains-cycles?' [SRW96]. Enforcing these shape invariants statically is
+useful. 
 
 This paper is organized in a top-down fashion. So far in Section 1 we have
 characterized shape analysis, stated the basic problems in the field, and
 motivated further study. Section 2 delves into the fundamental approaches to
 solving shape analysis problems. Section 3 discusses the achievements of the
-field and the state of the art. Section 4 presents the challenges and open
-problems in the field. Section 5 concludes.
+field and the state of the art. Section 4 presents the challenges remaining
+in the field. Section 5 concludes.
 
 \section{Solving shape analysis problems}
 
@@ -60,14 +62,44 @@ by [JM82], [LH88], and [SRW96]. The other is the C-like model employed by
 posed by loads, stores, reference passing, and recursive data structures.
 The C model complicates the Lisp model with pointer dereferencing and a slew
 of unsafe memory operations. While this model enables analysis of a larger
-class of programs, some authors eschew it to focus on fundamentals. Other
-program preprocessing steps exist, such as the injection of `kill'
+class of programs, some authors eschew it in order to focus on fundamentals.
+Other program preprocessing steps exist, such as the injection of `kill'
 instructions before all assignments (as seen in [SRW96]). This simple trick
 leads to simplified data-flow equations as compared to those in [LH88]. Such
 `frontend-level' differences are useful and drive diversity in the
 literature, but are ultimately engineering concerns.
 
 \subsection{Abstract interpretation}
+
+Abstract interpretation is akin to normal program interpretation (i.e
+execution), but with a simplified operational semantics. The key idea is to
+replace concrete program values with abstract values from a lattice, and to
+then simulate the resulting program until a fixed-point criterion is met.
+
+A good early exposition of abstract interpretation is found in [JM82]. It
+begins with an explanation of the use of lattices to approximate concrete
+program values. The authors specify a concrete-value lattice $A$ and an
+abstract approximation lattice $A'$, and define a pair of functions which
+translate values between the two lattices: $abs : A \rightarrow A'$ and
+$conc : A' \rightarrow A$. Then they state an important \textit{safe
+approximation criterion}: given an $n$-ary concrete operation $\varphi : A^n
+\rightarrow A$, an approximation operation $\varphi' : (A')^n \rightarrow
+A'$ is safe if for all $a_1, ..., a_n$: $\{abs(\varphi(a_1, ..., a_n)) \mid
+\forall i. a_i \in conc(a'_i)\} \subseteq \varphi'(a'_1, ..., a'_n)$. The
+intuition behind this requirement is that the abstract $n$-ary operation
+must contain all values that result from abstracting any feasible concrete
+version of the abstract operation. While this is a general criterion, the
+rules for abstracting the \texttt{cons} operation in [JM82] implicitly rely
+on this property.
+
+The goal of the abstract interpretation in [JM82] is to find the subset $S
+\subseteq \Sigma$ of finitely reachable states
+In order to construct their data-flow analyzer, 
+
+The abstract interpretation showcased in [JM82] is very flexible and
+foundational. It can capture accurate descriptions of recursive data
+structures, perform interprocedural analysis, and easily trade speed for
+precision by adjusting its token sets.
 
 \subsection{Shape graph lattices}
 
@@ -139,6 +171,16 @@ Future work;
     \item Overcoming as many of the limitations mentioned above as possible.
 \end{enumerate}
 
+Shape analyses determine the structure of dynamically-updated storage
+statically.
+
+Most immediately, it lets us answer questions about how a program organizes
+memory without running it. For example, we may specify a set of invariants
+for objects in memory and determine whether or not these invariants are ever
+violated (i.e we may model-check data structures). Shape analysis enables
+invariants which constrain memory accesses, allowing us to answer relevant
+questions about memory sharing and reachability in programs.
+
 \section{Bibliography}
 
 \begin{enumerate}[1.]
@@ -208,17 +250,7 @@ Topic: shape analysis.
 
 :: What is the goal of shape analysis?
 
-Shape analyses determine the structure of dynamically-updated storage
-statically.
-
 :: Why is this important?
-
-Most immediately, it lets us answer questions about how a program organizes
-memory without running it. For example, we may specify a set of invariants
-for objects in memory and determine whether or not these invariants are ever
-violated (i.e we may model-check data structures). Shape analysis enables
-invariants which constrain memory accesses, allowing us to answer relevant
-questions about memory sharing and reachability in programs.
 
 Specific applications of shape analysis techniques include detecting null
 pointer dereferences, faulty handling of memory deallocation or destruction,
@@ -261,34 +293,4 @@ treat allocations as cons cells).
 	  to the `shape graph' or equivalent data structure.  
 	o Detail on efficient, parallel computation of these structures is also
 	  lacking.
-
-      (old intro)
-Shape analysis techniques generate a static approximation of the dynamic
-structure of program memory. The basic problems in shape analysis are (1) to
-decompose a program into a set of locations, (2) to conservatively determine
-what these locations point to, and (3) to determine whether the contents of
-program memory will preserve an arbitrary set of shape invariants. The goal
-of shape analysis is to answer deep questions about a program's memory-usage
-patterns without actually running it. The ability to answer these questions
-is powerful and broadly applicable.
-
-For example, shape analysis is applied in compile-time optimizations.
-Consider the problem of automatically transforming a program into fragments
-which run in parallel. Any such compiler transformation must find
-statements in the program which contain conflicting memory accesses, and
-ensure that these statements are not executed at the same time [LH88]. The
-graph structures used in several shape analysis algorithms (e.g [HPR89],
-[LH88], and [SRW96]) are amenable to solving this problem, and other related
-dependency-tracking problems which arise in optimization.
-
-Shape analysis is also applied to in program verification. In fact, authors
-occasionally demonstrate the efficacy of their shape analysis techniques by
-verifying semantic properties of code fragments. For example, the method
-presented in [SRW96] is used to verify that a list-reversal algorithm
-maintains the invariant that a designated list head pointer always points to
-a linked list structure. The same paper supports other sophisticated shape
-invariants such as `is-a-tree?' and `contains-cycles?'. The ability to
-check for and enforce such invariants statically is useful.
-
-
 \end{document}
