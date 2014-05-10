@@ -30,7 +30,7 @@ several shape analysis methods (e.g [HPR89], [LH88], and [SRW96]) are
 amenable to solving this problem, and other related dependency-tracking
 problems which arise in optimization. In the field of program verification,
 shape analysis can be used to check if variables satisfy sophisticated
-invariants such as `is-a-list', `is-a-tree', and `is-a-circular-list'
+invariants such as `is-a-list?', `is-a-tree?', and `contains-cycles?'
 [SRW96]. Enforcing these shape invariants statically is useful.
 
 This paper is organized in a top-down fashion. So far in Section 1 we have
@@ -42,42 +42,45 @@ problems in the field. Section 5 concludes.
 
 \section{Solving shape analysis problems}
 
-There are several different approaches to solving the shape analysis
-problem. Instead of describing each one individually, we make
-generalizations whenever appropriate and focus on the following recurring
-motifs: program preprocessing, abstract interpretation, and the shape graph
-lattice.
+The wealth of research in this field has lead to multiple different
+approaches to solving the shape analysis problem. Instead of describing each
+approach individually, we discuss their commonalities and make
+generalizations whenever appropriate. In this section, we focus on the
+following recurring motifs: specialized program representation, abstract
+interpretation, and the construction of a shape graph via lattice
+operations.
 
-In the literature, programs are usually represented either by a 
+\subsection{Program representation}
 
-Program preprocessing has wide-ranging effects on the scope and complexity
-of an analysis algorithm. For example, the extra `kill' instructions used in
-[SRW96] lead to simplified data-flow equations relative to the ones employed
-in [LH88]. As an extension of preprocessing, program representations are
-tailored to suit specific environments, leading to 
-a diversity of analysis methods
-. Two representations stand out from the literature, it is common to see tprograms usually either adhere to a
-Lisp-like \texttt{cons}-cell model (e.g as in [JM82], [LH88], and [SRW96])
-or to a C-like model with lower-level pointer operations (e.g as in
-[Steen95], [AG01], and [KS13]). 
+The choice of program representation has affects the scope and complexity of
+analysis algorithms. In the literature, there are two common classes of
+representations. The first is the Lisp-y \texttt{cons}-cell model espoused
+by [JM82], [LH88], and [SRW96]. The other is the C-like model employed by
+[Steen95], [AG01], and [KS13]. The Lisp model focuses on the challenges
+posed by loads, stores, reference passing, and recursive data structures.
+The C model complicates the Lisp model with pointer dereferencing and a slew
+of unsafe memory operations. While this model enables analysis of a larger
+class of programs, some authors eschew it to focus on fundamentals. Other
+program preprocessing steps exist, such as the injection of `kill'
+instructions before all assignments (as seen in [SRW96]). This simple trick
+leads to simplified data-flow equations as compared to those in [LH88]. Such
+`frontend-level' differences are useful and drive diversity in the
+literature, but are ultimately engineering concerns.
 
-Supporting the C model (i.e pointer
-dereferences and unsafe memory operations) in addition to loads and stores
-enables analysis of a larger class of programs, but imposes burdens which
-some authors eschew. Program preprocessing plays an important role in 
+\subsection{Abstract interpretation}
 
-Once a program representation is fixed, the statements in 
+\subsection{Shape graph lattices}
 
 \textit{Shape graphs} are the fundamental data structure used in shape
 analysis 
-    \footnote{Shape graphs are formally defined in [SRW96]. Other authors
-        use conceptually similar objects (e.g alias graphs in [LH88],
-        retrieval functions in [JM82], etc), but we use the language of
-    `shape graphs' for convenience.}.
-The vertices of the graph are program locations or `shape nodes'.
-There edges in the graph are directed and represent reachability between
-nodes. Usually, shape graphs are equipped with multiple types of edges to
-handle language features such as field and array selectors.
+    \footnote{Shape graphs are formally defined in [SRW96], and we treat
+        this work as representative. Other authors use conceptually similar
+        objects (e.g alias graphs in [LH88], retrieval functions in [JM82],
+        etc), so this is not an egregious claim.}.
+The vertices of the graph are program locations or `shape nodes'.  There
+directed edges in the graph encode reachability. Usually, shape graphs are
+equipped with multiple types of edges to handle language features such as
+field and array selectors.
 
     Jones and Muchnick generate tokens at strategic points in a program to
     represent locations. They are able to vary the precision of their
@@ -88,7 +91,7 @@ handle language features such as field and array selectors.
 The shape graph is the central object in 
 
 \begin{enumerate}[1.]
-    \item     \item Shape graphs.
+    \item Shape graphs.
     \item Abstract interpretation.
     \item Concrete vs. collecting vs. abstract semantics.
     \item Dataflow equations.
@@ -97,14 +100,6 @@ The shape graph is the central object in
     \item Handling context-sensitivity.
     \item Handling destructive pointer updates.
 \end{enumerate}
-
-Pausing and inspecting a running program would give us the information we
-need to solve the shape analysis for a fixed instant in time. 
-
-When a program is actually run, we can think of each of its variables as
-
-At runtime, we can conceptually think of creating a new location for a
-program variable each time it is updated. 
 
 \section{The state of the art}
 
@@ -292,7 +287,7 @@ verifying semantic properties of code fragments. For example, the method
 presented in [SRW96] is used to verify that a list-reversal algorithm
 maintains the invariant that a designated list head pointer always points to
 a linked list structure. The same paper supports other sophisticated shape
-invariants such as `is-a-tree' and `is-a-circular-list'. The ability to
+invariants such as `is-a-tree?' and `contains-cycles?'. The ability to
 check for and enforce such invariants statically is useful.
 
 
