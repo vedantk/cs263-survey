@@ -53,35 +53,32 @@ graphs via lattice operations.
 
 \subsection{Program representation}
 
-The choice of program representation affects the scope and complexity of
-analysis algorithms. In the literature there are two common classes of
-representations. The first is the Lisp-y \texttt{cons}-cell model espoused
-by [JM82], [LH88], and [SRW96]. The other is the C-like model employed by
-[Steen95], [AG01], and [KS13]. The Lisp model focuses on the challenges
-posed by loads, stores, reference passing, and recursive data structures.
-The C model is similar, but considers pointer dereferencing and a slew of
-unsafe memory operations as well. While this model enables analysis of a
-larger class of programs, some authors eschew it in order to focus on
-fundamentals.  Other program preprocessing steps exist, such as the
-injection of `kill' instructions before all assignments (as seen in
+The choice of program representation affects the scope and complexity of any
+analysis. In the literature there are two common classes of representations.
+The first is the Lisp-y \texttt{cons}-cell model espoused by [JM82], [LH88],
+and [SRW96]. The other is the C-like model employed by [Steen95], [AG01],
+and [KS13]. The Lisp model handles loads, stores, reference passing, and
+recursive data structures.  The C model is similar, but considers pointer
+dereferencing and a slew of unsafe memory operations as well. While the C
+model enables analysis of a larger class of programs, some authors eschew it
+in order to focus on fundamentals.  Other program preprocessing steps exist,
+such as the injection of `kill' instructions before all assignments (seen in
 [SRW96]). This simple trick leads to simplified data-flow equations as
-compared to those in [LH88]. Such `frontend-level' differences are useful
-and drive diversity in the literature, but are ultimately engineering
-concerns.
+compared to those in [LH88]. Such `frontend-level' differences can be
+significant and drive diversity in the literature.
 
 \subsection{Abstract interpretation}
 
 Abstract interpretation is akin to normal program interpretation (i.e
 execution), but with a specialized operational semantics. The key ideas are
-(1) to replace concrete program values with abstract values from a lattice,
-and (2) to then simulate the resulting program using the new operational
-semantics until a fixed-point is reached. Shape analysis algorithms utilize
-abstract interpretation to compute dataflow relations between the various
-locations in a program, resulting in a model of the in-memory structures of
-a program.
+(1) to replace concrete program values with abstract values, and (2) to then
+simulate the resulting program under the new operational semantics. Shape
+analysis algorithms utilize abstract interpretation to compute dataflow
+relations between the various locations in a program, resulting in a model
+of its in-memory structures.
 
 The first step in abstract interpretation is to safely replace concrete
-program values with abstract ones. In [JM82] \footnote{To guide our
+program values with abstract ones. In [JM82] \footnote{To focus our
 discussion, we treat definitions from [JM82] as representative throughout 
 this subsection.}, the authors specify a concrete-value lattice $A$, an
 accompanying abstract approximation lattice $A'$, and a pair of functions
@@ -94,9 +91,7 @@ for all $a_1, ..., a_n$: $\{abs(\varphi(a_1, ..., a_n)) \mid \forall i.  a_i
 this requirement is that the abstract $n$-ary operation must contain all
 values that result from abstracting any feasible concrete version of the
 abstract operation.  This is a general criterion which sound abstraction
-function must comply with (e.g the $combine_{ij}$ rule for merging abstract
-environments in the \texttt{escape} and \texttt{return} operations rely on
-this property).
+functions must satisfy.
 
 The second step in abstract interpretation is to define concrete and
 abstract versions of the program state.  The concrete state of a program is
@@ -110,19 +105,18 @@ representation to model two program data types: atomic values and binary
 lists.
 
 The third step in abstract interpretation is to define the semantic action
-of each program construct. This is a mechanical step, so we provide more
-detail in the next subsection and curtail the discussion here. It suffices
-to say that coupled with an equivalence relation abstract states, these
-semantics allow computation of the subset $S' \subseteq \Delta$ of reachable
-abstract states in a program. The abstract interpretation is actually
-effected by a simulation function $f : \Delta \rightarrow \Delta$. The
-interpretation terminates when a least fixed point is found. The set
-$\Delta$ is ordered by subset inclusion: existence of the least fixed point
-follows from the Tarski-Knaster theorem provided $f$ is monotone and that
-there are no infinitely ascending chains in $\Delta$. This simulation can
-capture accurate descriptions of recursive data structures, perform
-interprocedural analysis, and trade speed for precision by adjusting its
-token sets. It is a flexible and foundational idea.
+of each program construct. This is a difficult but mechanical step, so we
+curtail its discussion here. It suffices to say that coupled with an
+equivalence relation on abstract states, these semantics allow computation
+of the subset $S' \subseteq \Delta$ of reachable states in a program.  The
+abstract interpretation is carried out by a simulation function $f : \Delta
+\rightarrow \Delta$. The interpretation terminates when a least fixed point
+is found. The set $\Delta$ is ordered by subset inclusion: existence of the
+least fixed point follows from the Tarski-Knaster theorem provided $f$ is
+continuous and that there are no infinitely ascending chains in $\Delta$.
+This simulation can capture accurate descriptions of recursive data
+structures, perform interprocedural analysis, and trade speed for precision
+by adjusting its token sets. It is a flexible and foundational idea.
 
 \subsection{Shape graphs}
 
