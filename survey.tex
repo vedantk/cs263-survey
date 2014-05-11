@@ -137,17 +137,22 @@ will not be too idiosyncratic. We define shape graphs, examine how they are
 constructed, discuss some interesting properties, and compare them to other
 abstract state representations.
 
-This structure is formally defined in [SRW96] as a
-finite digraph $\langle E_v, E_s \rangle$ consisting of \textit{shape
-nodes}, \textit{variable edges}, and \textit{selector edges}. Variable edges
-of the form $[x, n]$ reside in $E_v$, where $x$ is a pointer variable and
-$n$ is a shape node. Selector edges of the form $[s, sel, t]$ reside in
+The shape graph is a finite digraph consisting of \textit{shape nodes},
+\textit{variable edges}, and \textit{selector edges}. It is formally defined
+as a tuple $\langle E_s, E_v \rangle$ in [SRW96]. Variable edges of the form
+$[x, n]$ reside in $E_v$, where $x$ is a pointer variable and $n$ is a shape
+node (i.e graph vertex). Selector edges of the form $[s, sel, t]$ reside in
 $E_s$, where $sel$ is a selector and $s$ and $t$ are shape nodes. The sets
-$E_v$ and $E_s$ fully describe the graph structure. 
+$E_v$ and $E_s$ fully describe the shape graph. $\mathcal{DSG}$ is the class
+of deterministic shape graphs, i.e graphs satisfying $\forall x.  |E_v(x)|
+\leq 1$ and $\forall x. \forall sel. |E_s(x, sel)| \leq 1$. These graphs
+may only represent the ephemeral results of one execution sequence. We
+require another class of static shape graphs to conservatively represent a
+subsets of $\mathcal{DSG}$ for our abstract semantics. This class is the
+lattice $\mathcal{SSG}$, ordered by componentwise subset inclusion.
 
-$\mathcal{DSG}$
-
-
+Conceptually, shape graphs are constructed by collecting graphs from
+$\mathcal{DSG}$ 
 
 Interesting properties of shape graphs;
 \begin{enumerate}[1.]
