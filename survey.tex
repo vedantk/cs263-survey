@@ -2,6 +2,7 @@
 
 \usepackage{amsmath}
 \usepackage{amssymb}
+\usepackage{hyperref}
 \usepackage{enumerate}
 \usepackage{indentfirst}
 \usepackage[margin=1in]{geometry}
@@ -204,17 +205,19 @@ topics.
 
 \section{Main achivements}
 
-The results in [SRW02] stand out as major achievements in the field. The
-authors were able to design a logical framework which characterizes a wide
-range of structural invariants. These invariants are highly expressive: they
-may encode type information, structure connectivity properties, and ordering
-properties. In addition, the authors designed a domain-specific language in
-which these invariants may be expressed. An analyzer-generator was
-implemented to transform these specially-crafted invariants into a
-conservative shape analyzer. The shape analysis algorithm itself builds upon
-previous work.
+The results in [SRW02] stand out as major achievements in shape analysis.
+First, the authors characterize the abstract state representations used in
+previous works as variants of the shape graph. They then build upon shape
+graphs to create a logical framework for expressing a wide range of
+structural invariants.  These invariants are highly expressive: they may
+encode type information, structure connectivity properties, and ordering
+properties. In addition, the authors implemented a domain-specific language
+for `programming' these invariants. An analyzer-generator was implemented to
+transform these invariants into a program that enforces them. These results
+are significant for their general nature and emphasis on practicality.
 
-Shape analysis techniques may be applied interprocedurally, due to
+Over the years there have been several other major achievements in the
+field. Shape analysis techniques may be applied interprocedurally, due to
 consistent consideration throughout the literature (e.g in [JM82], [LH88],
 [SRW*], etc). Work has also been done to reduce the space complexity of
 shape analysis: merged shape nodes are discussed in [SRW96], while summary
@@ -226,24 +229,21 @@ implemented (e.g in the LLVM compiler framework).
 
 \section{Current limitations}
 
-The perfect shape analysis algorithm produces a deterministic shape graph
-that accurately describes the contents of memory at any selected point in
-time. Three program features make such an algorithm infeasible:
-non-determinism, destructive updating, and recursion. 
-
-\begin{enumerate}[1.]
-    \item handling context sensitivity / interprocedural => hard
-    \item size of structures (s/l limits, k-limiting, merging shape nodes)
-    \item complexity of context sensitive analysis
-    \item NP-hardness of approximation (see Larus/Hilfinger).
-    \item Concerns about tractability.
-    \item Usually deals with heap-allocated storage, ignores the stack, and
-        other types of (potentially volatile) memory.
-    \item NULL pointer dereferences.
-    \item Dealing with unsafe deallocations (\texttt{free()}).
-    \item Difficulty of implementation.
-    \item Constructing a conservative approximation quickly.
-\end{enumerate}
+According to results cited in [LH88], precisely solving the structural alias
+problem is NP-complete, placing fundamental limits on the efficiency of
+shape analysis algorithms. Moreover, we are faced with an unavoidable loss
+of precision when collapsing sets of deterministic shape graphs into a
+single static shape graph. Language features such as non-determinism,
+destructive updating, and recursion make perfectly precise static shape
+analysis impossible. It is not clear how to quantify the loss of precision,
+or if there are techniques that minimize this loss for certain classe of
+programs. Space limits are also a pressing issue: some algorithms use
+hardcoded size limits on shape nodes (e.g $sl$ limits in [LH88]) or perform
+merging in order to keep graphs compact, at the expense of precision.
+Supporting interprocedural analysis and context sensitivity exacerbates the
+time and space complexity concerns mentioned earlier. A final non-trivial
+hurdle is the difficulty of implementing these techniques for complex,
+unsafe languages such as C++.
 
 \section{Conclusion}
 
@@ -282,6 +282,7 @@ questions about memory sharing and reachability in programs.
         Efficient Data-Flow Analysis of Large Programs. In
         \textit{Proceedings of the International Conference on Software
         Maintenance}, pages 52-61, 2001.
+    \item LLVM, \url{http://llvm.org/}.
     \item S. Horwitz, P. Pfeiffer, and T. Reps. Dependence Analysis for
         Pointer Variables. In \textit{Proceedings of the ACM SIGPLAN 
         Conference on Programming Language Design and Implementation}, pages
