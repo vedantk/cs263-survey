@@ -61,21 +61,21 @@ and [KS13]. The Lisp model handles loads, stores, reference passing, and
 recursive data structures.  The C model is similar, but considers pointer
 dereferencing and a slew of unsafe memory operations as well. While the C
 model enables analysis of a larger class of programs, some authors eschew it
-in order to focus on fundamentals.  Other program preprocessing steps exist,
-such as the injection of `kill' instructions before all assignments (seen in
-[SRW96]). This simple trick leads to simplified data-flow equations as
-compared to those in [LH88]. Such `frontend-level' differences can be
-significant and drive diversity in the literature.
+in order to focus on fundamentals. Apart from the choice of program
+representation, preprocessing is a common way to simplify analyses. For
+example,  `kill' instructions are injected before all assignments in [SRW96]
+to make the dataflow relations more compact. Such `frontend-level'
+differences can be significant and drive diversity in the literature.
 
 \subsection{Abstract interpretation}
 
 Abstract interpretation is akin to normal program interpretation (i.e
 execution), but with a specialized operational semantics. The key ideas are
-(1) to replace concrete program values with abstract values, and (2) to then
+(1) to replace concrete program values with abstract values, and (2) to 
 simulate the resulting program under the new operational semantics. Shape
 analysis algorithms utilize abstract interpretation to compute dataflow
 relations between the various locations in a program, resulting in a model
-of its in-memory structures.
+of in-memory structures.
 
 The first step in abstract interpretation is to safely replace concrete
 program values with abstract ones. In [JM82] \footnote{To focus our
@@ -90,8 +90,8 @@ for all $a_1, ..., a_n$: $\{abs(\varphi(a_1, ..., a_n)) \mid \forall i.  a_i
 \in conc(a'_i)\} \subseteq \varphi'(a'_1, ..., a'_n)$. The intuition behind
 this requirement is that the abstract $n$-ary operation must contain all
 values that result from abstracting any feasible concrete version of the
-abstract operation.  This is a general criterion which sound abstraction
-functions must satisfy.
+abstract operation. All operations in the abstract operational semantics
+must satisfy this criterion.
 
 The second step in abstract interpretation is to define concrete and
 abstract versions of the program state.  The concrete state of a program is
@@ -116,7 +116,7 @@ least fixed point follows from the Tarski-Knaster theorem provided $f$ is
 continuous and that there are no infinitely ascending chains in $\Delta$.
 This simulation can capture accurate descriptions of recursive data
 structures, perform interprocedural analysis, and trade speed for precision
-by adjusting its token sets. It is a flexible and foundational idea.
+by adjusting its token sets. It is a flexible and foundational concept.
 
 \subsection{Shape graphs}
 
