@@ -183,11 +183,12 @@ that all variable edges emanating from a shape node are removed on a
 $nil$-assignment. This can be expressed as $[\![x :=
 \textbf{nil}]\!]_{\mathcal{SSG}}(\langle E_v, E_s \rangle) \approx \langle
 E_v - [x, *], E_s \rangle$ where all shape nodes $n_X$ s.t $x \in X$ are
-renamed to $n_{X - \{x\}}$ \footnote{Some details have been omitted here for
-simplicity.}. Strong nullification is cited as a crucial factor in
-model-checking the `is-list?' invariant on list reversal functions: without
-it, it would be difficult to precisely distinguish the list head pointers of
-the old and new lists.
+renamed to $n_{X - \{x\}}$ \footnote{We omit some details here for
+simplicity. The actual abstract semantics are not defined in this way.}.
+Strong nullification is cited as a crucial factor in model-checking the
+`is-list?' invariant on list reversal functions: without it, it would be
+difficult to precisely distinguish the list head pointers of the old and new
+lists.
 
 In comparison to the method described in [JM82], the shape graph formalism
 permits more flexibility in terms of supported structural invariants. We are
@@ -267,9 +268,6 @@ and open problems of the field are presented.
 \section{Bibliography}
 
 \begin{enumerate}[1.]
-    \item U. A{\ss}mann and M. Weinhardt. Interprocedural Heap Analysis for
-        Parallelizing Imperative Programs. In \textit{IEEE, Programming
-        Models for Massively Parallel Computers}, pages 74-82, 1993.
     \item D. Atkinson and W. Griswold. Effective Whole-Program Analysis in
         the Presence of Pointers. In \textit{SIGSOFT '98/FSE-6 Proceedings
         of the 6th ACM SIGSOFT'}, pages 46-55, 1998.
