@@ -138,26 +138,34 @@ node (i.e a graph vertex). Selector edges of the form $[s, sel, t]$ reside
 in $E_s$, where $sel$ is a selector and $s$ and $t$ are shape nodes. The
 sets $E_v$ and $E_s$ fully describe the shape graph. The class of
 deterministic shape graphs is $\mathcal{DSG}$: it contains graphs which may
-only represent the ephemeral results of one execution sequence.  Formally,
+only represent the ephemeral effects of one execution sequence.  Formally,
 graphs in $\mathcal{DSG}$ satisfy $\forall x.  |E_v(x)| \leq 1$ and $\forall
 x.  \forall sel. |E_s(x, sel)| \leq 1$. We require a separate class of
 static shape graphs to conservatively represent subsets of $\mathcal{DSG}$
 for our abstract semantics. This class is the lattice $\mathcal{SSG}$,
-ordered by componentwise subset inclusion. 
+ordered by component-wise subset inclusion. 
 
 Our goal of computing useful static program representations is within reach.
-First, we define a concrete semantics as a $\mathcal{DSG}$-transformer:
-$[\![st]\!]_{\mathcal{DSG}}: \mathcal{DSG} \rightarrow \mathcal{DSG}$.
-Second, we represent the control flow nodes of the program as the set $V$.
-Third, we define a \textit{collecting semantics}, $c : V \rightarrow
-2^{\mathcal{DSG}}$, which generates all feasible deterministic shape graphs
-for any given program point. Next, we define an abstraction function,
-$\alpha : 2^{\mathcal{DSG}} \rightarrow \mathcal{SSG}$. Finally, we define
-the abstract semantics as a $\mathcal{SSG}$-transformer:
+First, we define a concrete semantics as a
+$\mathcal{DSG}$-transformer: $[\![st]\!]_{\mathcal{DSG}}: \mathcal{DSG}
+\rightarrow \mathcal{DSG}$.  Second, we represent the control flow nodes of
+the program as a set $V$.  Third, we define a \textit{collecting semantics},
+$c : V \rightarrow 2^{\mathcal{DSG}}$, which generates all feasible
+deterministic shape graphs for any given program point. Explicitly, $c(v) =
+\{[\![st(v_k)]\!]_{\mathcal{DSG}}(...,
+[\![st(v_1)]\!]_{\mathcal{DSG}}(\langle \phi, \phi \rangle)) \mid v_1, ...,
+v_k \in pathsTo(v)\}$, where $pathsTo : V \rightarrow 2^V$ yields all paths
+through the CFG which may transition to $v$. Next, we define an abstraction
+function, $\alpha : 2^{\mathcal{DSG}} \rightarrow \mathcal{SSG}$. Finally,
+we define the abstract semantics as a $\mathcal{SSG}$-transformer:
 $[\![st]\!]_{\mathcal{SSG}}: \mathcal{SSG} \rightarrow \mathcal{SSG}$.
-Putting all of the pieces together, the shape analysis algorithm can be
-thought of as the function composition $\alpha \circ c : V \rightarrow
-2^{\mathcal{DSG}} \rightarrow \mathcal{SSG}$.
+Putting all the pieces together, the shape analysis algorithm can be thought
+of as the function composition $\alpha \circ c : V \rightarrow
+2^{\mathcal{DSG}} \rightarrow \mathcal{SSG}$ followed by a fixed-point
+iteration. A discussion of the exact concrete and abstract semantics is
+omitted because it would require pages of dense equations and exposition.
+For reference, figures 2 and 6 in [SRW96] provide exact specifications of
+$[\![st]\!]_{\mathcal{DSG}, \mathcal{SSG}}$.
 
 Interesting properties of shape graphs;
 \begin{enumerate}[1.]
@@ -174,10 +182,7 @@ Interesting properties of shape graphs;
     \item 
 \end{enumerate}
 
-Details I'm fuzzy on, which could be important;
 \begin{enumerate}[1.]
-    \item Concrete vs. collecting vs. abstract semantics.
-    \item Lattice structure used to revise shape graphs.
     \item Handling interprocedural flows, context-sensitivity?
     \item Handling destructive pointer updates?
 \end{enumerate}
