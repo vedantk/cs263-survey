@@ -123,12 +123,13 @@ foundational concept.
 
 Shape graphs are an alternate form of abstract state representation
 introduced in [SRW96]. We focus on shape graphs because they have been used
-to drive key advances in the field. Though not ubiquitous, shape graphs are
-conceptually similar to the alias graph in [LH88] and (to some extent) to
-the retrieval functions of [JM82], so our discussion will not be too
-idiosyncratic. We define shape graphs, examine how they are constructed,
-discuss some interesting properties, and compare them to other abstract
-state representations.
+to drive key advances in the field. The shape graph is conceptually similar to
+the alias graph in [LH88] and (to some extent) the retrieval functions of
+[JM82], so our discussion will not be too idiosyncratic. We define shape
+graphs \footnote{All results in this subsection are drawn directly from
+[SRW96], unless explicitly mentioned otherwise.}, examine how they are
+constructed, discuss some interesting properties, and compare them to other
+abstract state representations.
 
 The shape graph is a finite digraph consisting of \textit{shape nodes},
 \textit{variable edges}, and \textit{selector edges}. It is formally defined
@@ -142,7 +143,7 @@ only represent the ephemeral effects of one execution sequence.  Formally,
 graphs in $\mathcal{DSG}$ satisfy $\forall x.  |E_v(x)| \leq 1$ and $\forall
 x.  \forall sel. |E_s(x, sel)| \leq 1$. We require a separate class of
 static shape graphs to conservatively represent subsets of $\mathcal{DSG}$
-for our abstract semantics. This class is the lattice $\mathcal{SSG}$,
+for our abstract semantics. This new class is the lattice $\mathcal{SSG}$,
 ordered by component-wise subset inclusion. 
 
 Our goal of computing useful static program representations is within reach.
@@ -151,7 +152,7 @@ $\mathcal{DSG}$-transformer: $[\![st]\!]_{\mathcal{DSG}}: \mathcal{DSG}
 \rightarrow \mathcal{DSG}$.  Second, we represent the control flow nodes of
 the program as a set $V$.  Third, we define a \textit{collecting semantics},
 $c : V \rightarrow 2^{\mathcal{DSG}}$, which generates all feasible
-deterministic shape graphs for any given program point. Explicitly, $c(v) =
+deterministic shape graphs for a given program point. Explicitly, $c(v) =
 \{[\![st(v_k)]\!]_{\mathcal{DSG}}(...,
 [\![st(v_1)]\!]_{\mathcal{DSG}}(\langle \phi, \phi \rangle)) \mid v_1, ...,
 v_k \in pathsTo(v)\}$, where $pathsTo : V \rightarrow 2^V$ yields all paths
@@ -164,23 +165,30 @@ of as the function composition $\alpha \circ c : V \rightarrow
 2^{\mathcal{DSG}} \rightarrow \mathcal{SSG}$ followed by a fixed-point
 iteration. A discussion of the exact concrete and abstract semantics is
 omitted because it would require pages of dense equations and exposition.
-For reference, figures 2 and 6 in [SRW96] provide exact specifications of
+For reference, figures 2 and 6 in [SRW96] fully specify 
 $[\![st]\!]_{\mathcal{DSG}, \mathcal{SSG}}$.
 
-Interesting properties of shape graphs;
-\begin{enumerate}[1.]
-    \item Shape nodes are named using a possibly empty set of variables. A
-        shape node is named by the variables that all point to the same
-        run-time location at the selected program point. This naming scheme
-        is fluid, and does not force shape nodes to irreversibly partion
-        memory. As a direct consequence, multiple shape nodes may exist at
-        a program point. Further, collections of shape nodes can be
-        summarized into a single node, and later may be un-summarized if
-        necessary.
+Shape graphs have numerous interesting properties. For one, the shape nodes
+at a given CFG node $v$ are named by the set of $v$-local variables which
+all point to the same run-time location. This naming scheme is fluid.
+Variables can be added, removed, and moved between shape nodes to model
+$\mathcal{DSG}$-transformations as precisely as possible. Shape nodes are
+not forced to irreversibly partion memory with a fixed variable labelling:
+they may be \textit{materialized} (split into more granular nodes) as well
+as \textit{un-materialized} (coalesced into a summary node) as necessary.
+The variable-set naming scheme enables \textit{strong nullification}, the
+property that all variable edges emanating from a shape node are removed on
+a $nil$-assignment. The naming scheme allows strong nullification to rename
+and split/merge all shape nodes affected by the assignment. This property is
+expressed as $[\![x := \textbf{nil}]\!]_{\mathcal{SSG}}(\langle E_v, E_s
+\rangle) \approx \langle E_v - [x, *], E_s \rangle$ where all shape nodes
+$n_X$ s.t $x \in X$ are renamed to $X - \{x\}$ (some details have been
+omitted here for simplicity).  Strong nullification is cited as a crucial
+factor in model-checking the `is-list?' invariant.  
 
-    \item The concrete semantics generate deterministic shape graphs.
-    \item 
-\end{enumerate}
+Comparison
+    not limited to atomis and binary lists 
+    better naming scheme / LH88
 
 \begin{enumerate}[1.]
     \item Handling interprocedural flows, context-sensitivity?
