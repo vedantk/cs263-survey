@@ -210,11 +210,12 @@ First, the authors characterize the abstract state representations used in
 previous works as variants of the shape graph. They then build upon shape
 graphs to create a logical framework for expressing a wide range of
 structural invariants.  These invariants are highly expressive: they may
-encode type information, structure connectivity properties, and ordering
-properties. In addition, the authors implemented a domain-specific language
-for `programming' these invariants. An analyzer-generator was implemented to
-transform these invariants into a program that enforces them. These results
-are significant for their general nature and emphasis on practicality.
+encode type information, structure connectivity properties, as well as
+ordering properties. In addition, the authors implemented a domain-specific
+language for `programming' these invariants. An analyzer-generator was
+implemented to transform these invariants into a program that enforces them.
+These results are significant for their general nature and emphasis on
+practicality.
 
 Over the years there have been several other major achievements in the
 field. Shape analysis techniques may be applied interprocedurally, due to
@@ -227,7 +228,7 @@ efficient (notably demand-driven analysis). The popular work from [Steen95],
 Steensgaard's almost linear-time points-to algorithm, has been widely
 implemented (e.g in the LLVM compiler framework).
 
-\section{Current limitations}
+\section{Limitations and open problems}
 
 According to results cited in [LH88], precisely solving the structural alias
 problem is NP-complete, placing fundamental limits on the efficiency of
@@ -236,38 +237,32 @@ of precision when collapsing sets of deterministic shape graphs into a
 single static shape graph. Language features such as non-determinism,
 destructive updating, and recursion make perfectly precise static shape
 analysis impossible. It is not clear how to quantify the loss of precision,
-or if there are techniques that minimize this loss for certain classe of
+or if there are techniques that minimize this loss for certain classes of
 programs. Space limits are also a pressing issue: some algorithms use
 hardcoded size limits on shape nodes (e.g $sl$ limits in [LH88]) or perform
 merging in order to keep graphs compact, at the expense of precision.
 Supporting interprocedural analysis and context sensitivity exacerbates the
-time and space complexity concerns mentioned earlier. A final non-trivial
-hurdle is the difficulty of implementing these techniques for complex,
-unsafe languages such as C++.
+time and space complexity concerns mentioned earlier. Parallelizing the
+shape analysis algorithm to take advantage of SMP and distributed systems is
+an underexplored problem. A final non-trivial problem is the difficulty of
+implementing shape analysis techniques for complex, unsafe languages such as
+C++.
 
 \section{Conclusion}
 
-Fastest?
-Most space-efficient?
-Best complexity?
-Most precise?
-
-Future work;
-\begin{enumerate}[1.]
-    \item Designing parallel shape analysis algorithms.
-    \item Determine the best way to trade precision for speed.
-    \item Overcoming as many of the limitations mentioned above as possible.
-\end{enumerate}
-
 Shape analyses determine the structure of dynamically-updated storage
-statically.
+statically, answering questions about how memory is organized. In the area
+of program verification, shape analysis can be used to statically perform
+model-checking of functions and structural invariants. In the area of
+optimization, the closely-related alias analysis and pointer analysis
+algorithms are crucial for inferring data dependences. Important
+optimizations such as lifting instructions out of loops, code-elimination,
+and instruction reordering heavily depend upon this information.
 
-Most immediately, it lets us answer questions about how a program organizes
-memory without running it. For example, we may specify a set of invariants
-for objects in memory and determine whether or not these invariants are ever
-violated (i.e we may model-check data structures). Shape analysis enables
-invariants which constrain memory accesses, allowing us to answer relevant
-questions about memory sharing and reachability in programs.
+In summary, we have defined shape analysis and discussed its applicability.
+Common features of shape analysis algorithms are explained in some detail,
+and some comparative notes are included. Finally, the achievements, limits
+and open problems of the field are presented.
 
 \section{Bibliography}
 
@@ -316,42 +311,5 @@ questions about memory sharing and reachability in programs.
         SIGPLAN conference on Programming Language Design and
         Implementation}, pages 365-375, 2013.
 \end{enumerate}
-
-\section*{Notes}
-
-:: Survey Guidelines
-
-3) Write a report on what you have learned (max 6 pages)
-        - What are the basic problems
-        - What are the basic approaches to solving them
-        - What are the main achievements to date
-        - What are open problems
-Keep the scope narrow enough so you can say something interesting, and cover
-2-3 lectures worth of material.
-
-===========================================================================
-
-Topic: shape analysis.
-
-:: Is shape analysis a hard problem? Why (what are the 'basic problems')?
-
-Undecidibility, false positives, conservativeness, time bounds (?).
-
-Loss of precision due to abstract interpretation, simplifications which do not
-reflect the properties of real-world programs (e.g ignore NULL dereferences,
-treat allocations as cons cells).
-
-:: What is the current state-of-the-art in shape analysis?
-
-- Candidate: a more recent paper by M\&S which concerns parameterized 3-valued
-  logic.
-
-:: What unsolved problems remain? How can we make progress in this field?
-
-- Make it faster
-    - Select data structures with thought for the underlying architecture
-    - Mention demand-driven techniques (Atkinson, Griswold, 1998)
-    - Create parallel analyses
-- Make it more precise
 
 \end{document}
