@@ -38,9 +38,9 @@ useful.
 This paper is organized in a top-down fashion. So far in Section 1 we have
 characterized shape analysis, stated the basic problems in the field, and
 motivated further study. Section 2 delves into the fundamental approaches to
-solving shape analysis problems. Section 3 discusses the achievements of the
-field and the state of the art. Section 4 presents the challenges remaining
-in the field. Section 5 concludes.
+solving shape analysis problems. Section 3 discusses the main achievements
+in the field. Section 4 presents the challenges remaining in the field.
+Section 5 concludes.
 
 \section{Solving shape analysis problems}
 
@@ -83,21 +83,21 @@ a program.
 
 The first step in abstract interpretation is to safely replace concrete
 program values with abstract ones. In [JM82] \footnote{We focus on
-definitions from [JM82] to guide our discussion throughout this
-subsection.}, the authors specify a concrete-value lattice $A$, an
-accompanying abstract approximation lattice $A'$, and a pair of functions
-which translate between the two lattices: $abs : A \rightarrow A'$ and $conc
-: A' \rightarrow A$. They then state an important \textit{safe approximation
-criterion}: given an $n$-ary concrete operation $\varphi : A^n \rightarrow
-A$, an approximation operation $\varphi' : (A')^n \rightarrow A'$ is safe if
-for all $a_1, ..., a_n$: $\{abs(\varphi(a_1, ..., a_n)) \mid \forall i. a_i
-\in conc(a'_i)\} \subseteq \varphi'(a'_1, ..., a'_n)$. The intuition behind
-this requirement is that the abstract $n$-ary operation must contain all
-values that result from abstracting any feasible concrete version of the
-abstract operation. This is a general criterion which sound abstraction
-function must comply with (e.g the $combine_{ij}$ rule for merging abstract
-environments in the \texttt{escape} and \texttt{return} operations rely on
-this property).
+definitions from [JM82] and treat them as representative to guide our
+discussion throughout this subsection.}, the authors specify a
+concrete-value lattice $A$, an accompanying abstract approximation lattice
+$A'$, and a pair of functions which translate between the two lattices: $abs
+: A \rightarrow A'$ and $conc : A' \rightarrow A$. They then state an
+important \textit{safe approximation criterion}: given an $n$-ary concrete
+operation $\varphi : A^n \rightarrow A$, an approximation operation
+$\varphi' : (A')^n \rightarrow A'$ is safe if for all $a_1, ..., a_n$:
+$\{abs(\varphi(a_1, ..., a_n)) \mid \forall i.  a_i \in conc(a'_i)\}
+\subseteq \varphi'(a'_1, ..., a'_n)$. The intuition behind this requirement
+is that the abstract $n$-ary operation must contain all values that result
+from abstracting any feasible concrete version of the abstract operation.
+This is a general criterion which sound abstraction function must comply
+with (e.g the $combine_{ij}$ rule for merging abstract environments in the
+\texttt{escape} and \texttt{return} operations rely on this property).
 
 The second step in abstract interpretation is to define concrete and
 abstract versions of the program state.  The concrete state of a program is
@@ -129,23 +129,34 @@ token sets. It is a flexible and foundational idea.
 
 Shape graphs are an alternate abstract state representation, conceptually
 similar to the alias graph in [LH88] and to some extent the retrieval
-functions of [JM82]. This structure is defined in [SRW96] \footnote{As in
-the previous section, we focus on the definitions in [SRW96] for clarity.}
-as a finite digraph consisting of \textit{shape nodes}, \textit{variable
-edges}, and \textit{selector edges}.
+functions of [JM82]. This structure is formally defined in [SRW96] as a
+finite digraph consisting of \textit{shape nodes}, \textit{variable edges},
+and \textit{selector edges}.
 
+Interesting properties of shape graphs;
 \begin{enumerate}[1.]
-    \item Shape graphs.
-    \item Abstract interpretation.
-    \item Concrete vs. collecting vs. abstract semantics.
-    \item Dataflow equations.
-    \item Lattice structure of shape graphs.
-    \item Modelling interprocedural control flow.
-    \item Handling context-sensitivity.
-    \item Handling destructive pointer updates.
+    \item Shape nodes are named using a possibly empty set of variables. A
+        shape node is named by the variables that all point to the same
+        run-time location at the selected program point. This naming scheme
+        is fluid, and does not force shape nodes to irreversibly partion
+        memory. As a direct consequence, multiple shape nodes may exist at
+        a program point. Further, collections of shape nodes can be
+        summarized into a single node, and later may be un-summarized if
+        necessary.
+
+    \item The concrete semantics generate deterministic shape graphs.
+    \item 
 \end{enumerate}
 
-\section{The state of the art}
+Details I'm fuzzy on, which could be important;
+\begin{enumerate}[1.]
+    \item Concrete vs. collecting vs. abstract semantics.
+    \item Lattice structure used to revise shape graphs.
+    \item Handling interprocedural flows, context-sensitivity?
+    \item Handling destructive pointer updates?
+\end{enumerate}
+
+\section{Main achivements}
 
 Fastest?
 Most space-efficient?
@@ -166,7 +177,7 @@ non-determinism, destructive updating, and recursion.
 \begin{enumerate}[1.]
     \item NP-hardness of approximation (see Larus/Hilfinger).
     \item Concerns about tractability.
-    \item Disambiguating between heap-allocated storage, the stack, and
+    \item Usually deals with heap-allocated storage, ignores the stack, and
         other types of (potentially volatile) memory.
     \item NULL pointer dereferences.
     \item Dealing with unsafe deallocations (\texttt{free()}).
