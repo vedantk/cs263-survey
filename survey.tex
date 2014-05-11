@@ -295,10 +295,6 @@ questions about memory sharing and reachability in programs.
 
 :: Survey Guidelines
 
-1) Pick an area in which you are interested. Alternatively, pick a paper
-   from a recent POPL or PLDI conference. 
-2) Read thoroughly 3-6 papers (or a monograph?). Read at least superficially
-   3-6 other papers. 
 3) Write a report on what you have learned (max 6 pages)
         - What are the basic problems
         - What are the basic approaches to solving them
@@ -311,14 +307,6 @@ Keep the scope narrow enough so you can say something interesting, and cover
 
 Topic: shape analysis.
 
-:: What is the goal of shape analysis?
-
-:: Why is this important?
-
-Specific applications of shape analysis techniques include detecting null
-pointer dereferences, faulty handling of memory deallocation or destruction,
-and memory leaks.
-
 :: Is shape analysis a hard problem? Why (what are the 'basic problems')?
 
 Undecidibility, false positives, conservativeness, time bounds (?).
@@ -327,33 +315,17 @@ Loss of precision due to abstract interpretation, simplifications which do not
 reflect the properties of real-world programs (e.g ignore NULL dereferences,
 treat allocations as cons cells).
 
-:: What are the general approaches to performing shape analysis?
-
-- L\&H: Construct an `alias graph' using abstract interpretation over a lattice
-  structure, then answer structural queries by traversing the graph.
-- M\&S: Construct a `shape graph' via similar means. The meet operation of the
-  shape graph lattice differs from that of L\&H, and indeed the structure of the
-  shape nodes is also very different. This class of graph is still constructed
-  via similar means (i.e abstract interpretation, with a lattice structure to
-  merge graphs).
-
 :: What is the current state-of-the-art in shape analysis?
 
-- Candidate: shape graphs of M\&S, see their discussion.
 - Candidate: a more recent paper by M\&S which concerns parameterized 3-valued
   logic.
-
-- Mention demand-driven techniques (Atkinson, Griswold, 1998)
 
 :: What unsolved problems remain? How can we make progress in this field?
 
 - Make it faster
     - Select data structures with thought for the underlying architecture
+    - Mention demand-driven techniques (Atkinson, Griswold, 1998)
     - Create parallel analyses
 - Make it more precise
-- Make it more usable: how do we implement practical, fast analyses?
-	o Papers often omit how to implement a mechanism for submitting queries
-	  to the `shape graph' or equivalent data structure.  
-	o Detail on efficient, parallel computation of these structures is also
-	  lacking.
+
 \end{document}
