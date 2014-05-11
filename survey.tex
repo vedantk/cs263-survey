@@ -168,32 +168,27 @@ omitted because it would require pages of dense equations and exposition.
 For reference, figures 2 and 6 in [SRW96] fully specify 
 $[\![st]\!]_{\mathcal{DSG}, \mathcal{SSG}}$.
 
-Shape graphs have numerous interesting properties. For one, the shape nodes
-at a given CFG node $v$ are named by the set of $v$-local variables which
-all point to the same run-time location. This naming scheme is fluid.
-Variables can be added, removed, and moved between shape nodes to model
-$\mathcal{DSG}$-transformations as precisely as possible. Shape nodes are
-not forced to irreversibly partion memory with a fixed variable labelling:
-they may be \textit{materialized} (split into more granular nodes) as well
-as \textit{un-materialized} (coalesced into a summary node) as necessary.
-The variable-set naming scheme enables \textit{strong nullification}, the
-property that all variable edges emanating from a shape node are removed on
-a $nil$-assignment. The naming scheme allows strong nullification to rename
-and split/merge all shape nodes affected by the assignment. This property is
-expressed as $[\![x := \textbf{nil}]\!]_{\mathcal{SSG}}(\langle E_v, E_s
-\rangle) \approx \langle E_v - [x, *], E_s \rangle$ where all shape nodes
-$n_X$ s.t $x \in X$ are renamed to $X - \{x\}$ (some details have been
-omitted here for simplicity).  Strong nullification is cited as a crucial
-factor in model-checking the `is-list?' invariant.  
+Shape graphs have interesting properties, such as a fluid naming scheme and
+strong nullification. The naming scheme is simple: the shape nodes at a
+given CFG node $v$ are named by the set of $v$-local variables which all
+point to the same run-time location.  Variables can be added, removed, and
+moved between shape nodes to model $\mathcal{DSG}$-transformations as
+precisely as possible. Shape nodes are not forced to irreversibly partion
+memory with a fixed variable labelling: they may be \textit{materialized}
+(split into more granular nodes) as well as \textit{un-materialized}
+(coalesced into a summary node) as necessary.  The variable-set naming
+scheme also enables our second property, \textit{strong nullification}, the
+condition that all variable edges emanating from a shape node are removed on
+a $nil$-assignment. This can be expressed as $[\![x :=
+\textbf{nil}]\!]_{\mathcal{SSG}}(\langle E_v, E_s \rangle) \approx \langle
+E_v - [x, *], E_s \rangle$ where all shape nodes $n_X$ s.t $x \in X$ are
+renamed to $n_{X - \{x\}}$ (some details have been omitted here for
+simplicity).  Strong nullification is cited as a crucial factor in enabling
+the model-checking of the `is-list?' invariant.
 
 Comparison
     not limited to atomis and binary lists 
     better naming scheme / LH88
-
-\begin{enumerate}[1.]
-    \item Handling interprocedural flows, context-sensitivity?
-    \item Handling destructive pointer updates?
-\end{enumerate}
 
 \section{Main achivements}
 
@@ -214,6 +209,8 @@ time. Three program features make such an algorithm infeasible:
 non-determinism, destructive updating, and recursion. 
 
 \begin{enumerate}[1.]
+    \item handling context sensitivity / interprocedural => hard
+    \item size of structures (s/l limits, k-limiting, merging shape nodes)
     \item complexity of context sensitive analysis
     \item NP-hardness of approximation (see Larus/Hilfinger).
     \item Concerns about tractability.
