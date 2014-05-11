@@ -181,25 +181,43 @@ scheme also enables our second property, \textit{strong nullification}, the
 condition that all variable edges emanating from a shape node are removed on
 a $nil$-assignment. This can be expressed as $[\![x :=
 \textbf{nil}]\!]_{\mathcal{SSG}}(\langle E_v, E_s \rangle) \approx \langle
-E_v - [x, *], E_s \rangle$ where all shape nodes $n_X$ s.t $x \in X$ are
-renamed to $n_{X - \{x\}}$ (some details have been omitted here for
-simplicity).  Strong nullification is cited as a crucial factor in enabling
+E_v - [x, *], E_s \rangle$ \footnote{Some details have been omitted here for
+simplicity.} where all shape nodes $n_X$ s.t $x \in X$ are renamed to $n_{X
+- \{x\}}$.  Strong nullification is cited as a crucial factor in enabling
 the model-checking of the `is-list?' invariant.
 
-Comparison
-    not limited to atomis and binary lists 
-    better naming scheme / LH88
+In comparison to the method described in [JM82], the shape graph formalism
+permits more flexibility in terms of supported structural invariants. The
+language of retrieval functions would be difficult to extend for these
+purposes. In comparison to the alias graphs presented in [LH88], shape
+graphs have a simplfied naming scheme which dispenses with access path
+concatenation and aggregate labels (i.e node names containing regular
+expressions). Ironically, the method presented in [LH88] solves the
+alias-analysis problem in order to detect structure access conflicts, while
+alias-analysis is described as a feasible extension of the method in
+[SRW96].
 
 \section{Main achivements}
 
-Fastest?
-Most space-efficient?
-Best complexity?
-Most precise?
+The results in [SRW02] stand out as major achievements in the field. The
+authors were able to design a logical framework which characterizes a wide
+range of structural invariants. These invariants are highly expressive: they
+may encode type information, structure connectivity properties, and ordering
+properties. In addition, the authors designed a domain-specific language in
+which these invariants may be expressed. An analyzer-generator was
+implemented to transform these specially-crafted invariants into a
+conservative shape analyzer. The shape analysis algorithm itself builds upon
+previous work.
 
-Mention invariants Sagiv/Reps are able to capture.
-Discussion of Steensgaard here.
-Discussion of context sensitive/insensitive.
+Shape analysis techniques may be applied interprocedurally, due to
+consistent consideration throughout the literature (e.g in [JM82], [LH88],
+[SRW*], etc). Work has also been done to reduce the space complexity of
+shape analysis: merged shape nodes are discussed in [SRW96], while summary
+nodes and compact hammock graphs are discussed in [LH88]. In [AG98],
+implmentation techniques are established to make dataflow analysis more
+efficient (notably demand-driven analysis). The popular work from [Steen95],
+Steensgaard's almost linear-time points-to algorithm, has been widely
+implemented (e.g in the LLVM compiler framework).
 
 \section{Current limitations}
 
@@ -223,6 +241,11 @@ non-determinism, destructive updating, and recursion.
 \end{enumerate}
 
 \section{Conclusion}
+
+Fastest?
+Most space-efficient?
+Best complexity?
+Most precise?
 
 Future work;
 \begin{enumerate}[1.]
