@@ -1,6 +1,7 @@
 \documentclass{article}
 
 \usepackage{amsmath}
+\usepackage{amssymb}
 \usepackage{enumerate}
 \usepackage{indentfirst}
 \usepackage[margin=1in]{geometry}
@@ -127,11 +128,24 @@ token sets. It is a flexible and foundational idea.
 
 \subsection{Shape graphs}
 
-Shape graphs are an alternate abstract state representation, conceptually
-similar to the alias graph in [LH88] and to some extent the retrieval
-functions of [JM82]. This structure is formally defined in [SRW96] as a
-finite digraph consisting of \textit{shape nodes}, \textit{variable edges},
-and \textit{selector edges}.
+Shape graphs are an alternate form of abstract state representation
+introduced in [SRW96]. We focus on shape graphs even though they are not
+ubiquitous because they have been used to drive key advances in the field.
+Shape graphs are also conceptually similar to the alias graph in [LH88] and
+(to some extent) to the retrieval functions of [JM82], so our discussion
+will not be too idiosyncratic. 
+
+This structure is formally defined in [SRW96] as a
+finite digraph $\langle E_v, E_s \rangle$ consisting of \textit{shape
+nodes}, \textit{variable edges}, and \textit{selector edges}. Variable edges
+of the form $[x, n]$ reside in $E_v$, where $x$ is a pointer variable and
+$n$ is a shape node. Selector edges of the form $[s, sel, t]$ reside in
+$E_s$, where $sel$ is a selector and $s$ and $t$ are shape nodes. The sets
+$E_v$ and $E_s$ fully describe the graph structure. 
+
+$\mathcal{DSG}$
+
+
 
 Interesting properties of shape graphs;
 \begin{enumerate}[1.]
