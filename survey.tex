@@ -29,7 +29,7 @@ For example, in the field of compile-time optimization the task of
 automatically transforming a program into parallel fragments requires shape
 analysis to flag conflicting memory operations [LH88]. The graph structures
 used in several shape analysis methods (e.g [HPR89], [LH88], and [SRW96])
-are amenable to solving this problem, and related dependence analysis
+are amenable to solving this problem and related dependence analysis
 problems. In the field of program verification, shape analysis can be used
 to check if variables satisfy sophisticated invariants such as `is-a-list?',
 `is-a-tree?', and `contains-cycles?' [SRW96]. Static enforcement of such
@@ -87,22 +87,22 @@ which translate between the two lattices: $abs : A \rightarrow A'$ and $conc
 criterion}: given an $n$-ary concrete operation $\varphi : A^n \rightarrow
 A$, an approximation operation $\varphi' : (A')^n \rightarrow A'$ is safe if
 for all $a_1, ..., a_n$: $\{abs(\varphi(a_1, ..., a_n)) \mid \forall i.  a_i
-\in conc(a'_i)\} \subseteq \varphi'(a'_1, ..., a'_n)$. The intuition behind
+\in conc(a'_i)\} \sqsubseteq \varphi'(a'_1, ..., a'_n)$. The intuition behind
 this requirement is that the abstract $n$-ary operation must contain all
 values that result from abstracting any feasible concrete version of the
 abstract operation. All operations in the abstract operational semantics
 must satisfy this criterion.
 
 The second step in abstract interpretation is to define concrete and
-abstract versions of the program state.  The concrete state of a program is
-an element $\sigma \in Q \times A \times L$, where $Q$ is the set of
-control-flow edges and $L$ is the set of locations. The abstract state
-replaces the location set with the token set $T$. In addition, each state is
+abstract versions of the program state.  In [JM82], the concrete state of a
+program is an element $\sigma \in Q \times A \times L$, where $Q$ is the set
+of control-flow edges and $L$ is the set of locations. The abstract state
+replaces the location set with a token set $T$. In addition, each state is
 equipped with a partial \textit{retrieval function} ($\tau : T \rightarrow
 A' \times 2^{T \times T}$), which either maps tokens to atomic abstract
 values, or to two more tokens. These $\tau$-functions allow the abstract
-representation to model two program data types: atomic values and binary
-lists.
+representation to model exactly two program data types: atomic values and
+binary lists.
 
 The third step in abstract interpretation is to define the semantic action
 of each program construct. This is a difficult but mechanical step, so we
@@ -176,26 +176,31 @@ moved between shape nodes to model $\mathcal{DSG}$-transformations as
 precisely as possible. Shape nodes are not forced to irreversibly partion
 memory with a fixed variable labelling: they may be \textit{materialized}
 (split into more granular nodes) as well as \textit{un-materialized}
-(coalesced into a summary node) as necessary.  The variable-set naming
-scheme also enables our second property, \textit{strong nullification}, the
-condition that all variable edges emanating from a shape node are removed on
-a $nil$-assignment. This can be expressed as $[\![x :=
+(coalesced into summary nodes) as necessary.  The variable-set naming scheme
+enables the second property, \textit{strong nullification}, the condition
+that all variable edges emanating from a shape node are removed on a
+$nil$-assignment. This can be expressed as $[\![x :=
 \textbf{nil}]\!]_{\mathcal{SSG}}(\langle E_v, E_s \rangle) \approx \langle
-E_v - [x, *], E_s \rangle$ \footnote{Some details have been omitted here for
-simplicity.} where all shape nodes $n_X$ s.t $x \in X$ are renamed to $n_{X
-- \{x\}}$.  Strong nullification is cited as a crucial factor in enabling
-the model-checking of the `is-list?' invariant.
+E_v - [x, *], E_s \rangle$ where all shape nodes $n_X$ s.t $x \in X$ are
+renamed to $n_{X - \{x\}}$ \footnote{Some details have been omitted here for
+simplicity.}. Strong nullification is cited as a crucial factor in
+model-checking the `is-list?' invariant on list reversal functions: without
+it, it would be difficult to precisely distinguish the list head pointers of
+the old and new lists.
 
 In comparison to the method described in [JM82], the shape graph formalism
-permits more flexibility in terms of supported structural invariants. The
-language of retrieval functions would be difficult to extend for these
-purposes. In comparison to the alias graphs presented in [LH88], shape
-graphs have a simplfied naming scheme which dispenses with access path
-concatenation and aggregate labels (i.e node names containing regular
-expressions). Ironically, the method presented in [LH88] solves the
-alias-analysis problem in order to detect structure access conflicts, while
-alias-analysis is described as a feasible extension of the method in
-[SRW96].
+permits more flexibility in terms of supported structural invariants. We are
+not limited to atoms and binary lists, and have a straightforward way to
+model-checking new structures using graph traversal methods. In comparison
+to the alias graphs presented in [LH88], shape graphs have a simplfied
+naming scheme which dispenses with access path concatenation and aggregate
+labels (i.e node names containing regular expressions). While conceptually
+similar, these two structures are motivated in very different contexts. The
+method presented in [LH88] solves the alias analysis problem in order to
+detect structure access conflicts, while alias analysis is proposed as a
+straightforward extension of the method from [SRW96]. Clearly, alias
+analysis, pointer analysis, and shape analysis are highly interrelated
+topics.
 
 \section{Main achivements}
 
