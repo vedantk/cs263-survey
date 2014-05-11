@@ -109,14 +109,15 @@ of each program construct. This is a difficult but mechanical step, so we
 curtail its discussion here. It suffices to say that coupled with an
 equivalence relation on abstract states, these semantics allow computation
 of the subset $S' \subseteq \Delta$ of reachable states in a program.  The
-abstract interpretation is carried out by a simulation function $f : \Delta
-\rightarrow \Delta$. The interpretation terminates when a least fixed point
-is found. The set $\Delta$ is ordered by subset inclusion: existence of the
-least fixed point follows from the Tarski-Knaster theorem provided $f$ is
-continuous and that there are no infinitely ascending chains in $\Delta$.
-This simulation can capture accurate descriptions of recursive data
-structures, perform interprocedural analysis, and trade speed for precision
-by adjusting its token sets. It is a flexible and foundational concept.
+set $\Delta$ is ordered by subset inclusion: by the Tarski-Knaster theorem,
+a least fixed-point to a function $f: \Delta \rightarrow \Delta$ exists
+provided that there are no infinitely ascending chains in $\Delta$ and
+that $f$ is continuous. Let $f$ be our abstract simulation function: we 
+iterate it until the least fixed-point is reached, thereby completing the
+abstract interpretation. This simulation can capture accurate descriptions
+of recursive data structures, perform interprocedural analysis, and trade
+speed for precision by adjusting its token sets. It is a flexible and
+foundational concept.
 
 \subsection{Shape graphs}
 
@@ -135,16 +136,28 @@ as a tuple $\langle E_s, E_v \rangle$ in [SRW96]. Variable edges of the form
 $[x, n]$ reside in $E_v$, where $x$ is a pointer variable and $n$ is a shape
 node (i.e a graph vertex). Selector edges of the form $[s, sel, t]$ reside
 in $E_s$, where $sel$ is a selector and $s$ and $t$ are shape nodes. The
-sets $E_v$ and $E_s$ fully describe the shape graph. $\mathcal{DSG}$ is the
-class of deterministic shape graphs, i.e graphs satisfying $\forall x.
-|E_v(x)| \leq 1$ and $\forall x. \forall sel. |E_s(x, sel)| \leq 1$. These
-graphs may only represent the ephemeral results of one execution sequence.
-We require another class of static shape graphs to conservatively represent
-subsets of $\mathcal{DSG}$ for our abstract semantics. This class is the
-lattice $\mathcal{SSG}$, ordered by componentwise subset inclusion.
+sets $E_v$ and $E_s$ fully describe the shape graph. The class of
+deterministic shape graphs is $\mathcal{DSG}$: it contains graphs which may
+only represent the ephemeral results of one execution sequence.  Formally,
+graphs in $\mathcal{DSG}$ satisfy $\forall x.  |E_v(x)| \leq 1$ and $\forall
+x.  \forall sel. |E_s(x, sel)| \leq 1$. We require a separate class of
+static shape graphs to conservatively represent subsets of $\mathcal{DSG}$
+for our abstract semantics. This class is the lattice $\mathcal{SSG}$,
+ordered by componentwise subset inclusion. 
 
-Conceptually, shape graphs are constructed by collecting graphs from
-$\mathcal{DSG}$ 
+Our goal of computing useful static program representations is within reach.
+First, we define a concrete semantics as a $\mathcal{DSG}$-transformer:
+$[\![st]\!]_{\mathcal{DSG}}: \mathcal{DSG} \rightarrow \mathcal{DSG}$.
+Second, we represent the control flow nodes of the program as the set $V$.
+Third, we define a \textit{collecting semantics}, $c : V \rightarrow
+2^{\mathcal{DSG}}$, which generates all feasible deterministic shape graphs
+for any given program point. Next, we define an abstraction function,
+$\alpha : 2^{\mathcal{DSG}} \rightarrow \mathcal{SSG}$. Finally, we define
+the abstract semantics as a $\mathcal{SSG}$-transformer:
+$[\![st]\!]_{\mathcal{SSG}}: \mathcal{SSG} \rightarrow \mathcal{SSG}$.
+Putting all of the pieces together, the shape analysis algorithm can be
+thought of as the function composition $\alpha \circ c : V \rightarrow
+2^{\mathcal{DSG}} \rightarrow \mathcal{SSG}$.
 
 Interesting properties of shape graphs;
 \begin{enumerate}[1.]
