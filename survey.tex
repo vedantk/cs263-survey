@@ -29,29 +29,27 @@ For example, in the field of compile-time optimization the task of
 automatically transforming a program into parallel fragments requires shape
 analysis to flag conflicting memory operations [LH88]. The graph structures
 used in several shape analysis methods (e.g [HPR89], [LH88], and [SRW96])
-are amenable to solving not just this problem, but other related
-dependency-tracking problems which arise in optimization. In the field of
-program verification, shape analysis can be used to check if variables
-satisfy sophisticated invariants such as `is-a-list?', `is-a-tree?', and
-`contains-cycles?' [SRW96]. Enforcing these shape invariants statically is
-useful. 
+are amenable to solving this problem, and related dependence analysis
+problems. In the field of program verification, shape analysis can be used
+to check if variables satisfy sophisticated invariants such as `is-a-list?',
+`is-a-tree?', and `contains-cycles?' [SRW96]. Static enforcement of such
+shape invariants is useful.
 
 This paper is organized in a top-down fashion. So far in Section 1 we have
 characterized shape analysis, stated the basic problems in the field, and
 motivated further study. Section 2 delves into the fundamental approaches to
 solving shape analysis problems. Section 3 discusses the main achievements
-in the field. Section 4 presents the challenges remaining in the field.
+in the field. Section 4 presents the challenges remaining in the field, and
 Section 5 concludes.
 
 \section{Solving shape analysis problems}
 
-The wealth of research in this field has lead to multiple different
-approaches to solving the shape analysis problem. Instead of describing each
-approach individually, we discuss their commonalities and make
-generalizations whenever appropriate. In this section, we focus on the
-following recurring motifs: specialized program representation, abstract
-interpretation, and the construction of a shape graph via lattice
-operations.
+There are different approaches to solving the shape analysis problem.
+Instead of describing each approach individually, we discuss their
+commonalities and make generalizations whenever appropriate. In this
+section, we focus on the following recurring motifs: specialized program
+representation, abstract interpretation, and the construction of shape
+graphs via lattice operations.
 
 \subsection{Program representation}
 
@@ -83,22 +81,22 @@ locations in a program, resulting in a model of the in-memory structures of
 a program.
 
 The first step in abstract interpretation is to safely replace concrete
-program values with abstract ones. In [JM82] \footnote{We focus on
-definitions from [JM82] and treat them as representative to guide our
-discussion throughout this subsection.}, the authors specify a
-concrete-value lattice $A$, an accompanying abstract approximation lattice
-$A'$, and a pair of functions which translate between the two lattices: $abs
-: A \rightarrow A'$ and $conc : A' \rightarrow A$. They then state an
-important \textit{safe approximation criterion}: given an $n$-ary concrete
-operation $\varphi : A^n \rightarrow A$, an approximation operation
-$\varphi' : (A')^n \rightarrow A'$ is safe if for all $a_1, ..., a_n$:
-$\{abs(\varphi(a_1, ..., a_n)) \mid \forall i.  a_i \in conc(a'_i)\}
-\subseteq \varphi'(a'_1, ..., a'_n)$. The intuition behind this requirement
-is that the abstract $n$-ary operation must contain all values that result
-from abstracting any feasible concrete version of the abstract operation.
-This is a general criterion which sound abstraction function must comply
-with (e.g the $combine_{ij}$ rule for merging abstract environments in the
-\texttt{escape} and \texttt{return} operations rely on this property).
+program values with abstract ones. In [JM82] \footnote{To guide our
+discussion, we treat definitions from [JM82] as representative throughout 
+this subsection.}, the authors specify a concrete-value lattice $A$, an
+accompanying abstract approximation lattice $A'$, and a pair of functions
+which translate between the two lattices: $abs : A \rightarrow A'$ and $conc
+: A' \rightarrow A$. They then state an important \textit{safe approximation
+criterion}: given an $n$-ary concrete operation $\varphi : A^n \rightarrow
+A$, an approximation operation $\varphi' : (A')^n \rightarrow A'$ is safe if
+for all $a_1, ..., a_n$: $\{abs(\varphi(a_1, ..., a_n)) \mid \forall i.  a_i
+\in conc(a'_i)\} \subseteq \varphi'(a'_1, ..., a'_n)$. The intuition behind
+this requirement is that the abstract $n$-ary operation must contain all
+values that result from abstracting any feasible concrete version of the
+abstract operation.  This is a general criterion which sound abstraction
+function must comply with (e.g the $combine_{ij}$ rule for merging abstract
+environments in the \texttt{escape} and \texttt{return} operations rely on
+this property).
 
 The second step in abstract interpretation is to define concrete and
 abstract versions of the program state.  The concrete state of a program is
@@ -129,25 +127,25 @@ token sets. It is a flexible and foundational idea.
 \subsection{Shape graphs}
 
 Shape graphs are an alternate form of abstract state representation
-introduced in [SRW96]. We focus on shape graphs even though they are not
-ubiquitous because they have been used to drive key advances in the field.
-Shape graphs are also conceptually similar to the alias graph in [LH88] and
-(to some extent) to the retrieval functions of [JM82], so our discussion
-will not be too idiosyncratic. We define shape graphs, examine how they are
-constructed, discuss some interesting properties, and compare them to other
-abstract state representations.
+introduced in [SRW96]. We focus on shape graphs because they have been used
+to drive key advances in the field. Though not ubiquitous, shape graphs are
+conceptually similar to the alias graph in [LH88] and (to some extent) to
+the retrieval functions of [JM82], so our discussion will not be too
+idiosyncratic. We define shape graphs, examine how they are constructed,
+discuss some interesting properties, and compare them to other abstract
+state representations.
 
 The shape graph is a finite digraph consisting of \textit{shape nodes},
 \textit{variable edges}, and \textit{selector edges}. It is formally defined
 as a tuple $\langle E_s, E_v \rangle$ in [SRW96]. Variable edges of the form
 $[x, n]$ reside in $E_v$, where $x$ is a pointer variable and $n$ is a shape
-node (i.e graph vertex). Selector edges of the form $[s, sel, t]$ reside in
-$E_s$, where $sel$ is a selector and $s$ and $t$ are shape nodes. The sets
-$E_v$ and $E_s$ fully describe the shape graph. $\mathcal{DSG}$ is the class
-of deterministic shape graphs, i.e graphs satisfying $\forall x.  |E_v(x)|
-\leq 1$ and $\forall x. \forall sel. |E_s(x, sel)| \leq 1$. These graphs
-may only represent the ephemeral results of one execution sequence. We
-require another class of static shape graphs to conservatively represent a
+node (i.e a graph vertex). Selector edges of the form $[s, sel, t]$ reside
+in $E_s$, where $sel$ is a selector and $s$ and $t$ are shape nodes. The
+sets $E_v$ and $E_s$ fully describe the shape graph. $\mathcal{DSG}$ is the
+class of deterministic shape graphs, i.e graphs satisfying $\forall x.
+|E_v(x)| \leq 1$ and $\forall x. \forall sel. |E_s(x, sel)| \leq 1$. These
+graphs may only represent the ephemeral results of one execution sequence.
+We require another class of static shape graphs to conservatively represent
 subsets of $\mathcal{DSG}$ for our abstract semantics. This class is the
 lattice $\mathcal{SSG}$, ordered by componentwise subset inclusion.
 
